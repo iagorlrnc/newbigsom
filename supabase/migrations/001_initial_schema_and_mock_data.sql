@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS public.profiles;
 CREATE TABLE public.profiles (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     full_name TEXT,
+    phone TEXT,
     is_admin BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
     PRIMARY KEY (id)
@@ -28,8 +29,8 @@ CREATE POLICY "Users can update own profile." ON public.profiles FOR UPDATE USIN
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, is_admin)
-  VALUES (new.id, new.raw_user_meta_data->>'full_name', false);
+  INSERT INTO public.profiles (id, full_name, phone, is_admin)
+  VALUES (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'phone', false);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -70,7 +71,7 @@ BEGIN
 
     INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, raw_user_meta_data, created_at, updated_at, aud, role) 
     VALUES (
-        admin_id, '00000000-0000-0000-0000-000000000000', 'admin@bigsom.com.br', crypt('admin123', gen_salt('bf')), now(), '{"full_name":"Administrador Root"}', now(), now(), 'authenticated', 'authenticated'
+        admin_id, '00000000-0000-0000-0000-000000000000', 'admin@bigsom.com.br', crypt('admin123', gen_salt('bf')), now(), '{"full_name":"Administrador Root", "phone":"63999990000"}', now(), now(), 'authenticated', 'authenticated'
     );
     
     -- O Trigger rodou, vamos promover a Admin
@@ -78,7 +79,7 @@ BEGIN
 
     INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, raw_user_meta_data, created_at, updated_at, aud, role)
     VALUES (
-        client_id, '00000000-0000-0000-0000-000000000000', 'cliente@email.com', crypt('cliente123', gen_salt('bf')), now(), '{"full_name":"João Cliente"}', now(), now(), 'authenticated', 'authenticated'
+        client_id, '00000000-0000-0000-0000-000000000000', 'cliente@email.com', crypt('cliente123', gen_salt('bf')), now(), '{"full_name":"João Cliente", "phone":"63988880000"}', now(), now(), 'authenticated', 'authenticated'
     );
 
     INSERT INTO public.budgets (user_id, service_type, date, time, message, status) VALUES 

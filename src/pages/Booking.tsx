@@ -14,6 +14,9 @@ export default function Booking() {
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string>('');
+    const [vehicleBrand, setVehicleBrand] = useState('');
+    const [vehicleModel, setVehicleModel] = useState('');
+    const [vehicleYear, setVehicleYear] = useState('');
     const [service, setService] = useState<string>('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -58,6 +61,9 @@ export default function Booking() {
         try {
             const { error } = await supabase.from('budgets').insert({
                 user_id: user?.id,
+                vehicle_brand: vehicleBrand,
+                vehicle_model: vehicleModel,
+                vehicle_year: vehicleYear,
                 service_type: service,
                 date: format(selectedDate, 'yyyy-MM-dd'),
                 time: selectedTime,
@@ -91,8 +97,15 @@ export default function Booking() {
                 </div>
 
                 <div className="bg-zinc-900 shadow rounded-lg px-8 py-10 border border-zinc-800">
-                    <h2 className="text-3xl font-bold mb-2">Solicitar <span className="text-neon">Orçamento</span></h2>
-                    <p className="text-zinc-400 mb-8">Escolha a melhor data e horário para trazer seu veículo até nós.</p>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 md:gap-0">
+                        <h2 className="text-3xl font-bold">Solicitar <span className="text-neon">Orçamento</span></h2>
+                        {user?.user_metadata?.full_name && (
+                            <p className="text-zinc-400 text-lg">
+                                Bem-vindo, <span className="text-white font-medium">{user.user_metadata.full_name}</span>
+                            </p>
+                        )}
+                    </div>
+                    <p className="text-zinc-400 mb-8 -mt-6">Escolha a melhor data e horário para trazer seu veículo até nós.</p>
 
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         {/* Left Column: Date and Time */}
@@ -128,8 +141,8 @@ export default function Booking() {
                                             type="button"
                                             onClick={() => setSelectedTime(time)}
                                             className={`py-2 rounded-md text-sm font-medium transition-colors border ${selectedTime === time
-                                                    ? 'bg-[hsl(190,100%,40%)] border-[hsl(190,100%,40%)] text-white'
-                                                    : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-zinc-500'
+                                                ? 'bg-[hsl(190,100%,40%)] border-[hsl(190,100%,40%)] text-white'
+                                                : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-zinc-500'
                                                 }`}
                                         >
                                             {time}
@@ -141,6 +154,45 @@ export default function Booking() {
 
                         {/* Right Column: Details */}
                         <div className="space-y-6">
+
+                            <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Marca</label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 text-white focus:outline-none focus:border-neon"
+                                        placeholder="Ex: VW"
+                                        value={vehicleBrand}
+                                        onChange={(e) => setVehicleBrand(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium mb-2">Modelo</label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 text-white focus:outline-none focus:border-neon"
+                                        placeholder="Ex: Polo"
+                                        value={vehicleModel}
+                                        onChange={(e) => setVehicleModel(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Ano do Veículo</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-neon"
+                                    placeholder="Ex: 2023"
+                                    value={vehicleYear}
+                                    onChange={(e) => setVehicleYear(e.target.value)}
+                                    maxLength={4}
+                                    required
+                                />
+                            </div>
+
                             <div>
                                 <label className="block text-lg font-medium mb-2">Serviço Desejado</label>
                                 <select

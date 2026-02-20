@@ -6,7 +6,9 @@ import { ChevronLeft } from 'lucide-react';
 export default function Register() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -16,6 +18,12 @@ export default function Register() {
         setLoading(true);
         setError('');
 
+        if (password !== confirmPassword) {
+            setError('As senhas não coincidem.');
+            setLoading(false);
+            return;
+        }
+
         try {
             // Register user in Auth
             const { data, error: signUpError } = await supabase.auth.signUp({
@@ -23,7 +31,8 @@ export default function Register() {
                 password,
                 options: {
                     data: {
-                        full_name: fullName
+                        full_name: fullName,
+                        phone: phone
                     }
                 }
             });
@@ -106,6 +115,21 @@ export default function Register() {
 
                         <div>
                             <label className="block text-sm font-medium text-zinc-300">
+                                Telefone / WhatsApp
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    type="tel"
+                                    required
+                                    className="appearance-none block w-full px-3 py-2 border border-zinc-700 rounded-md shadow-sm placeholder-zinc-400 focus:outline-none focus:ring-neon focus:border-neon sm:text-sm bg-zinc-800"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-zinc-300">
                                 Senha
                             </label>
                             <div className="mt-1">
@@ -116,6 +140,22 @@ export default function Register() {
                                     className="appearance-none block w-full px-3 py-2 border border-zinc-700 rounded-md shadow-sm placeholder-zinc-400 focus:outline-none focus:ring-neon focus:border-neon sm:text-sm bg-zinc-800"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-zinc-300">
+                                Confirmar Senha
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    type="password"
+                                    required
+                                    minLength={6}
+                                    className="appearance-none block w-full px-3 py-2 border border-zinc-700 rounded-md shadow-sm placeholder-zinc-400 focus:outline-none focus:ring-neon focus:border-neon sm:text-sm bg-zinc-800"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                             </div>
                         </div>
