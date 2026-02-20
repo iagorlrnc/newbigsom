@@ -44,14 +44,11 @@ export default function Contact() {
                     <div className="contact-form slide-left flex flex-col justify-center items-center text-center p-8 bg-zinc-900 rounded-lg border border-zinc-800">
                         <h3 className="text-2xl font-bold mb-4">Agende seu Orçamento</h3>
                         <p className="mb-6 text-zinc-400">
-                            Para melhor atendê-lo e organizar nossa agenda, o solicitamento de orçamento agora é feito pela nossa plataforma digital.
+                            Para melhor atendê-lo, a solicitação de orçamento agora é feita através da nossa plataforma digital.
                         </p>
                         <Link to="/orcamento" className="btn btn-primary w-full max-w-sm mb-4">
                             Solicitar Orçamento
                         </Link>
-                        <p className="text-sm text-zinc-500">
-                            Requer criação de conta / login.
-                        </p>
                     </div>
                 </div>
             </div>
